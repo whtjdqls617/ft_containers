@@ -1,6 +1,8 @@
-#include "util.hpp"
-#include "vector.hpp"
+#include "utils.hpp"
+#include "./vector/vector.hpp"
 #include <iostream>
+#include <iterator>
+#include <vector>
 
 // int	main()
 // {
@@ -33,20 +35,16 @@
 
 int main()
 {
-	ft::vector<int> foo(3, 100); // three ints with a value of 100
-	ft::vector<int> bar(5, 200); // five ints with a value of 200
+  ft::vector<int> myvector;
+  for (int i=0; i<10; i++) myvector.push_back(i);	// myvector: 0 1 2 3 4 5 6 7 8 9
 
-	// foo.swap(bar);
+  typedef std::vector<int>::iterator iter_type;
 
-	std::cout << "foo contains:";
-	for (unsigned i = 0; i < foo.size(); i++)
-		std::cout << ' ' << foo[i];
-	std::cout << '\n';
+  std::vector<int>::iterator it;
+  for (it = myvector.begin(); it != myvector.end(); it++) {
+	  std::cout << *it << std::endl;
+  }
 
-	std::cout << "bar contains:";
-	for (unsigned i = 0; i < bar.size(); i++)
-		std::cout << ' ' << bar[i];
-	std::cout << '\n';
 
-	return 0;
+  return 0;
 }
