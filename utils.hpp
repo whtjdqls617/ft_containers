@@ -4,9 +4,17 @@
 
 namespace ft
 {
+	template <bool Cond, class T = void>
+	struct enable_if {};
+
+	template <class T>
+	struct enable_if <true, T> {
+		typedef T	type;
+	};
+
 	template <class InputIterator1, class InputIterator2>
   	bool lexicographical_compare (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2)
-	{
+	{ // 이거 왜 필요한지?
 		while (first1!=last1)
 		{
 			if (first2==last2 || *first2 < *first1)
@@ -36,7 +44,7 @@ namespace ft
 
 	template <class InputIterator1, class InputIterator2>
   	bool equal (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
-	{
+	{ // 이거 왜 필요한지?
 		while (first1!=last1)
 		{
     		if (!(*first1 == *first2))

@@ -1,8 +1,6 @@
 #include "utils.hpp"
 #include "./vector/vector.hpp"
 #include <iostream>
-#include <iterator>
-#include <vector>
 
 // int	main()
 // {
@@ -35,16 +33,49 @@
 
 int main()
 {
-  ft::vector<int> myvector;
-  for (int i=0; i<10; i++) myvector.push_back(i);	// myvector: 0 1 2 3 4 5 6 7 8 9
+   // constructors used in the same order as described above:
+  ft::vector<int> first;                                // empty vector of ints
+  ft::vector<int> second (4,100);                       // four ints with value 100
+  ft::vector<int> third (second.begin(),second.end());  // iterating through second
+  ft::vector<int> fourth (third);                       // a copy of third
 
-  typedef std::vector<int>::iterator iter_type;
+  // the iterator constructor can also be used to construct from arrays:
+  int myints[] = {16,2,77,29};
+  ft::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
 
-  std::vector<int>::iterator it;
-  for (it = myvector.begin(); it != myvector.end(); it++) {
-	  std::cout << *it << std::endl;
-  }
-
+  std::cout << "The contents of fifth are:";
+  for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
+    std::cout << ' ' << *it;
+  std::cout << '\n';
 
   return 0;
 }
+
+// int main()
+// {
+//   std::vector<int>::size_type sz;
+
+//   std::vector<int> foo;
+//   sz = foo.capacity();
+//   std::cout << "making foo grow:\n";
+//   for (int i=0; i<100; ++i) {
+//     foo.push_back(i);
+//     if (sz!=foo.capacity()) {
+//       sz = foo.capacity();
+//       std::cout << "capacity changed: " << sz << '\n';
+//     }
+//   }
+
+//   std::vector<int> bar;
+//   sz = bar.capacity();
+//   bar.reserve(100);   // this is the only difference with foo above
+//   std::cout << "making bar grow:\n";
+//   for (int i=0; i<100; ++i) {
+//     bar.push_back(i);
+//     if (sz!=bar.capacity()) {
+//       sz = bar.capacity();
+//       std::cout << "capacity changed: " << sz << '\n';
+//     }
+//   }
+//   return 0;
+// }

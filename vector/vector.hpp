@@ -19,137 +19,133 @@ namespace ft
 			typedef typename iterator_traits<Iterator>::pointer pointer;
 			typedef typename iterator_traits<Iterator>::reference reference;
 
-			reverse_iterator() : it(0) {} // explicit : 자동으로 형변환 되는 것을 막음 
-			explicit reverse_iterator(iterator_type it) : it(it) {}
+			reverse_iterator() : _it() {} // explicit : 자동으로 형변환 되는 것을 막음 
+			explicit reverse_iterator(iterator_type it) : _it(it) {}
 			template <class Iter>
-			reverse_iterator(const reverse_iterator<Iter>& rev_it) : it(rev_it.base()) {}
+			reverse_iterator(const reverse_iterator<Iter>& rev_it) : _it(rev_it.base()) {}
 
 			template <typename U>
 			reverse_iterator &operator=(const reverse_iterator<U>& rit) {
-				it = rit.base();
+				_it = rit.base();
 				return (*this);
 			}
 			
 			iterator_type	base() const {
-				return it;
+				return _it;
 			}
 
 			reference operator*() const {
 				iterator_type tmp;
-				tmp = it;
+				tmp = _it;
 				tmp--;
 				return *tmp;
 			}
 
-			// reverse_iterator operator+(difference_type n) const {
-			// 	return reverse_iterator(base() - n);
-			// }
+			reverse_iterator operator+(difference_type n) const {
+				return reverse_iterator(_it - n);
+			}
 
-			// reverse_iterator& operator++() {
-			// 	ptr++;
-			// 	return *this;
-			// }
-
-			// reverse_iterator operator++(int) {
-			// 	reverse_iterator tmp(*this);
-			// 	ptr++;
-			// 	return tmp;
-			// }
-			
-			reverse_iterator& operator+=(difference_type n) {
-				it += n;
+			reverse_iterator& operator++() {
+				_it--;
 				return *this;
 			}
 
-			// reverse_iterator operator-(difference_type n) const {
-			// 	return (reverse_iterator(*(ptr - n)));
-			// }
-
-			// reverse_iterator& operator--() {
-			// 	ptr--;
-			// 	return *this;
-			// }
-
-			// reverse_iterator operator--(int) {
-			// 	reverse_iterator tmp(*this);
-			// 	ptr--;
-			// 	return tmp;
-			// }
-
-			// reverse_iterator& operator-=(difference_type n) {
-			// 	return (*(ptr - n));
-			// }
-
-			// pointer operator->() const {
-			// 	return ptr;
-			// }
-
-			// reference operator[](difference_type n) const {
-			// 	return ptr[n];
-			// }
-
-			// ************************************ Relational operators ************************************
-
-			// template <class Iterator>
-			// friend bool operator==(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
-			// 					return (lhs.base() == rhs.base());
-			// 				}
+			reverse_iterator operator++(int) {
+				reverse_iterator tmp = *this;
+				_it--;
+				return tmp;
+			}
 			
-			// template <class Iterator>
-			// friend bool operator!=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
-			// 					return (lhs.base() != rhs.base());
-			// 				}
+			reverse_iterator& operator+=(difference_type n) {
+				_it -= n;
+				return *this;
+			}
 
-			// template <class Iterator>
-			// friend bool operator<(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
-			// 					return (lhs.base() < rhs.base());
-			// 				}
+			reverse_iterator operator-(difference_type n) const {
+				return (reverse_iterator(*(_it + n)));
+			}
 
-			// template <class Iterator>
-			// friend bool operator<=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
-			// 					return (lhs.base() <= rhs.base());
-			// 				}
+			reverse_iterator& operator--() {
+				_it++;
+				return *this;
+			}
 
-			// template <class Iterator>
-			// friend bool operator>(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
-			// 					return (lhs.base() > rhs.base());
-			// 				}
-			
-			// template <class Iterator>
-			// friend bool operator>=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
-			// 					return (lhs.base() >= rhs.base());
-			// 				}
-			// template <typename Iterator>
-  			// friend reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& it) {
-			// 	  reverse_iterator tmp = it;
-			// 	  tmp += n;
-			// 	  return (tmp);
-			// }
+			reverse_iterator operator--(int) {
+				reverse_iterator tmp = *this;
+				_it++;
+				return tmp;
+			}
 
-			// template <class Iterator>
-  			// friend typename reverse_iterator<Iterator>::difference_type operator- (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
-			// 	  reverse_iterator tmp1 = lhs;
-			// 	  reverse_iterator tmp2 = rhs;
-			// 	  return (tmp1.base() - tmp2.base());
-			// }
+			reverse_iterator& operator-=(difference_type n) {
+				_it += n;
+				return *this;
+			}
+
+			pointer operator->() const {
+				iterator_type tmp = _it;
+				return (*(--tmp));
+			}
+
+			reference operator[](difference_type n) const {
+				return (*(_it - (n + 1)));
+			}
 
 		protected :
-			iterator_type it;
+			iterator_type _it;
 	};
+	// ************************************ Relational operators ************************************
+
+	template <class Iterator>
+		bool operator==(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
+								return (lhs.base() == rhs.base());
+							}
+			
+	template <class Iterator>
+		bool operator!=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
+								return (lhs.base() != rhs.base());
+							}
+
+	template <class Iterator>
+		bool operator<(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
+								return (lhs.base() < rhs.base());
+							}
+
+	template <class Iterator>
+		bool operator<=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
+								return (lhs.base() <= rhs.base());
+							}
+
+	template <class Iterator>
+		bool operator>(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
+								return (lhs.base() > rhs.base());
+							}
+			
+	template <class Iterator>
+		bool operator>=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
+								return (lhs.base() >= rhs.base());
+							}
+	template <typename Iterator>
+  		reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& rev_it) {
+				  return (rev_it + n);
+			}
+
+	template <class Iterator>
+  		typename reverse_iterator<Iterator>::difference_type operator- (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs) {
+				  return (rhs.base() - lhs.base());
+			}
 	
 	template <typename T>
-	class MyIterator
+	class MyIterator : public ft::iterator<std::random_access_iterator_tag, T>
 	{
 		public :
 			// iterator_traits는 반복자와 배열의 포인터를 구분하기 위해서 만들어진 것
-			typedef T                                                     		iterator_type;
-			typedef typename iterator_traits<iterator_type>::iterator_category iterator_category; // 나중에 어떤 타입인지 정보를 얻을 수 있게 하기위해 traits 사용
-			typedef typename iterator_traits<iterator_type>::value_type        value_type;
-			typedef typename iterator_traits<iterator_type>::difference_type   difference_type;
-			typedef typename iterator_traits<iterator_type>::pointer           pointer;
-			typedef typename iterator_traits<iterator_type>::reference         reference;
+			typedef typename ft::iterator<std::random_access_iterator_tag, T>::iterator_category iterator_category; // 나중에 어떤 타입인지 정보를 얻을 수 있게 하기위해 traits 사용
+			typedef typename ft::iterator<std::random_access_iterator_tag, T>::value_type        value_type;
+			typedef typename ft::iterator<std::random_access_iterator_tag, T>::difference_type   difference_type;
+			typedef typename ft::iterator<std::random_access_iterator_tag, T>::pointer           pointer;
+			typedef typename ft::iterator<std::random_access_iterator_tag, T>::reference         reference;
 		
-			MyIterator() : ptr(0) {} // explicit : 자동으로 형변환 되는 것을 막음 
+			MyIterator() : ptr(NULL) {} // explicit : 자동으로 형변환 되는 것을 막음 
 			explicit MyIterator(pointer p) : ptr(p) {}
 			MyIterator(const MyIterator& it) : ptr(it.ptr) {}
 			MyIterator &operator=(const MyIterator& mit) {
@@ -167,7 +163,8 @@ namespace ft
 
 			MyIterator operator+(difference_type n) const {
 				MyIterator tmp = *this;
-				return (tmp += n);
+				tmp.ptr += n;
+				return (tmp);
 			}
 
 			MyIterator& operator++() {
@@ -176,7 +173,7 @@ namespace ft
 			}
 
 			MyIterator operator++(int) {
-				MyIterator tmp(*this);
+				MyIterator tmp = *this;
 				ptr++;
 				return tmp;
 			}
@@ -187,7 +184,9 @@ namespace ft
 			}
 
 			MyIterator operator-(difference_type n) const {
-				return (MyIterator(*(ptr - n)));
+				MyIterator tmp = *this;
+				tmp.ptr -= n;
+				return tmp;
 			}
 
 			MyIterator& operator--() {
@@ -196,13 +195,14 @@ namespace ft
 			}
 
 			MyIterator operator--(int) {
-				MyIterator tmp(*this);
+				MyIterator tmp = *this;
 				ptr--;
 				return tmp;
 			}
 
 			MyIterator& operator-=(difference_type n) {
-				return (*(ptr - n));
+				ptr -= n;
+				return *this;
 			}
 
 			pointer operator->() const {
@@ -210,58 +210,55 @@ namespace ft
 			}
 
 			reference operator[](difference_type n) const {
-				return ptr[n];
+				return (*(ptr + n));
 			}
 
-			// ************************************ Relational operators ************************************
-
-			template <class Iterator>
-			friend bool operator==(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
-								return (lhs.base() == rhs.base());
-							}
-			
-			template <class Iterator>
-			friend bool operator!=(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
-								return (lhs.base() != rhs.base());
-							}
-
-			template <class Iterator>
-			friend bool operator<(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
-								return (lhs.base() < rhs.base());
-							}
-
-			template <class Iterator>
-			friend bool operator<=(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
-								return (lhs.base() <= rhs.base());
-							}
-
-			template <class Iterator>
-			friend bool operator>(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
-								return (lhs.base() > rhs.base());
-							}
-			
-			template <class Iterator>
-			friend bool operator>=(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
-								return (lhs.base() >= rhs.base());
-							}
-			template <typename Iterator>
-  			friend MyIterator<Iterator> operator+(typename MyIterator<Iterator>::difference_type n, const MyIterator<Iterator>& it) {
-				  MyIterator tmp = it;
-				  tmp += n;
-				  return (tmp);
-			}
-
-			template <class Iterator>
-  			friend typename MyIterator<Iterator>::difference_type operator- (const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
-				  MyIterator tmp1 = lhs;
-				  MyIterator tmp2 = rhs;
-				  return (tmp1.base() - tmp2.base());
-			}
 
 		protected :
 			pointer	ptr;
 	};
 
+	// ************************************ Relational operators ************************************
+
+	template <class Iterator>
+	bool operator==(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
+		return (lhs.base() == rhs.base());
+		}
+			
+	template <class Iterator>
+	bool operator!=(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
+		return (lhs.base() != rhs.base());
+		}
+
+	template <class Iterator>
+	bool operator<(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
+		return (lhs.base() < rhs.base());
+		}
+
+	template <class Iterator>
+	bool operator<=(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
+		return (lhs.base() <= rhs.base());
+		}
+
+	template <class Iterator>
+	bool operator>(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
+		return (lhs.base() > rhs.base());
+		}
+			
+	template <class Iterator>
+	bool operator>=(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
+		return (lhs.base() >= rhs.base());
+		}
+
+	template <typename Iterator>
+  	MyIterator<Iterator> operator+(typename MyIterator<Iterator>::difference_type n, const MyIterator<Iterator>& it) {
+		return (it + n);
+		}
+
+	template <class Iterator>
+  	typename MyIterator<Iterator>::difference_type operator- (const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs) {
+		return (lhs.base() - rhs.base());
+		}
 
 	template <typename T, typename Alloc = std::allocator<T> >
 	class vector
@@ -284,69 +281,65 @@ namespace ft
 
 			// default - empty container constructor
 			// allocator는 디폴트만 사용하기 때문에 뒤에 = 이렇게 표현
-			explicit vector(const allocator_type &alloc = allocator_type()) : _begin(NULL), _end(NULL), _end_cap() {}
+			explicit vector(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _begin(NULL), _size(0), _capacity(0) {}
 
 			// fill - Constructs a container with n elements. Each element is a copy of val. -> vector에 n사이즈 만큼 value를 채우는 생성자
-			explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) {
-				_end_cap.second = alloc;
-				_begin = _end_cap.second.allocate(n); // allocate가 첫번째 값의 주소 반환
-				_end_cap.first = _begin + n; // 마지막 주소값
-				_end = _begin;
-				for (_end = _begin; _end < _end_cap.first; _end++)
-				{
-					_end_cap.second.construct(_end, val);
-				}
+			explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc(alloc), _begin(NULL), _size(0), _capacity(0) {
+				assign(n, val);
 			}
 
 			// range - Constructs a container with as many elements as the range [first,last), with each element constructed from its corresponding element in that range, in the same order.
 
-			// template <class InputIterator>
-			// vector(InputIterator first, InputIterator last, const allocator_type & = allocator_type()); // TODO : about Iterator
+			template <class InputIterator>
+			vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _alloc(alloc), _begin(NULL), _size(0), _capacity(0) {
+				assign(first, last);
+			} // TODO : about Iterator
 
 			// copy - Constructs a container with a copy of each of the elements in x, in the same order.
 
-			vector(const vector& x) {
+			vector(const vector& x) : _begin(NULL), _size(0), _capacity(0) {
 				*this = x;
 			}
 
 			vector& operator=(const vector& x) {
-				*this->_begin = x._begin;
-				*this->_end = x._end;
-				*this->_end_cap = x._end_cap;
-				return (*this);
+				assign(x.begin(), x.end());
+				return *this;
 			}
 
 			// ************************************ 소멸자 ************************************
 			~vector() {
-				clear();
-				_end_cap.second.deallocate(_begin, capacity()); //
+				_alloc.deallocate(_begin, _capacity);
 			}
 
 			// ************************************ Capacity ************************************
 			size_type size() const {
-				return (_end - _begin);
+				return (_size);
 			}
 
 			size_type capacity() const {
-				return size_type(_end_cap.first - _begin);
+				return (_capacity);
 			}
 
 			size_type max_size() const {
-				return (_end_cap.second.max_size());
+				return (_alloc.max_size());
 			}
 
 			void resize(size_type n, value_type val = value_type()) {
-				if (n < size()) {
-					while (size() - n) {
-						_end_cap.second.destroy(--_end);
-					}
-				}
-				else {
+				if (n > _capacity * 2)
 					reserve(n);
-					while (n - size()) {
-						_end_cap.second.construct(_end++, val);
-					}
+				else if (n > _capacity)
+					reserve(_capacity * 2);
+				if (n > _size)
+				{
+					for (size_type i = _size; i < n; i++)
+						_alloc.construct(_begin + i, val);
 				}
+				else
+				{
+					for (size_type i = n; i < _size; i++)
+						_alloc.destroy(_begin + i);
+				}
+				_size = n;
 			}
 
 			bool empty() const {
@@ -356,34 +349,30 @@ namespace ft
 			}
 
 			void reserve(size_type n){
-				if (capacity() < n) {
-					pointer old_begin = _begin;
-					pointer old_end = _end;
-					size_type old_size = size();
-					size_type old_capacity = capacity();
-					_begin = _end_cap.second.allocate(n);
-					_end_cap.first = _begin + n;
-					_end = _begin;
-					while (old_begin != old_end)
+				if (n > _capacity)
+				{
+					if (n > max_size())
+						throw(std::length_error("Cannot create ft::vector"));
+					pointer tmp = _alloc.allocate(n);
+					for (size_type i = 0; i < _size; i++)
 					{
-						_end_cap.second.construct(_end, *old_begin);
-						_end_cap.second.destroy(old_begin);
-						_end++;
-						old_begin++;
+						_alloc.construct(tmp + i, _begin[i]);
+						_alloc.destroy(_begin + i);
 					}
-					_end_cap.second.deallocate(old_begin - old_size, old_capacity);
-					_end_cap.first = _begin + capacity();
+					_alloc.deallocate(_begin, _capacity);
+					_begin = tmp;
+					_capacity = n;
 				}
 			}
 
 			// ************************************ Element Access ************************************
 
 			reference operator[](size_type n) {
-				return (*(_begin + n));
+				return (_begin[n]);
 			}
 
 			const_reference operator[](size_type n) const {
-				return (*(_begin + n));
+				return (_begin[n]);
 			}
 
 			reference at(size_type n) { // abort 뜨는게 맞는거였나? 기억이 안남..ㅎ
@@ -391,7 +380,7 @@ namespace ft
 					throw std::out_of_range("Vector::at");
 				}
 				else
-					return (*(_begin + n));
+					return (_begin[n]);
 			}
 
 			const_reference at(size_type n) const {
@@ -400,15 +389,15 @@ namespace ft
 					throw std::out_of_range("Vector::at");
 				}
 				else
-					return (*(_begin + n));
+					return (_begin[n]);
 			}
 
 			reference back() {
-				return (*(_end - 1));
+				return (*(_begin + _size - 1));
 			}
 
 			const_reference back() const {
-				return (*(_end - 1));
+				return (*(_begin + _size - 1));
 			}
 
 			reference front() {
@@ -421,49 +410,66 @@ namespace ft
 
 			// ************************************ Modifiers ************************************
 
+			template <class InputIterator>
+			void assign(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = NULL)
+			{
+				resize(0);
+				size_type n = 0;
+				InputIterator tmp = first;
+				while (tmp++ != last)
+					n++;
+				resize(n);
+				InputIterator it2 = first;
+				for (iterator it1 = begin(); it2 != last; ++it1)
+				{
+					_alloc.construct(&(*it1), *it2);
+					it2++;
+				}
+			}
+			
+			void assign(size_type n, const value_type& val)
+			{
+				resize(0);
+				resize(n);
+				for(iterator it = begin(); it != end(); it++)
+					_alloc.construct(&(*it), val);
+			}
+
 			void pop_back() {
 				if (size())
-					_end_cap.second.destroy(--_end);
+					resize(_size - 1);
 			}
 
 			void push_back (const value_type& val) {
 				//할당했던거 풀어주고, 크기 늘려놓고 다시 대입?
-				size_type length;
-				length = this->size();
-				if (length == 0)
-					length = 1;
-				else
-					length *= 2;
-				reserve(length);
-				_end_cap.second.construct(_end++, val);
+				resize(_size + 1, val);
 			}
 
 			void swap(vector &x) {
-				pointer tmp_begin = this->_begin;
-				pointer tmp_end = this->_end;
-				pointer tmp_end_cap_first = this->_end_cap.first;
-				allocator_type	tmp_end_cap_second = this->_end_cap.second;
+				allocator_type tmp_alloc = _alloc;
+				pointer tmp_begin = _begin;
+				size_type tmp_size = _size;
+				size_type tmp_capacity = _capacity;
 
-				this->_begin = x._begin;
-				this->_end = x._end;
-				this->_end_cap.first = x._end_cap.first;
-				this->_end_cap.second = x._end_cap.second;
+				_alloc = x._alloc;
+				_begin = x._begin;
+				_size = x._size;
+				_capacity = x._capacity;
 
+				x._alloc = tmp_alloc;
 				x._begin = tmp_begin;
-				x._end = tmp_end;
-				x._end_cap.first = tmp_end_cap_first;
-				x._end_cap.second = tmp_end_cap_second;
+				x._size = tmp_size;
+				x._capacity = tmp_capacity;
 			}
 
 			void clear() {
-				for (_end = _begin; _end < _end_cap.first; _end++)
-					_end_cap.second.destroy(_end);
+				resize(0);
 			}
 
 			// ************************************ Allocator ************************************
 
 			allocator_type get_allocator() const {
-				return _end_cap.second;
+				return _alloc;
 			}
 
 			// ************************************ Iterators ************************************
@@ -477,19 +483,19 @@ namespace ft
 			}
 
 			iterator end() {
-				return iterator(_end);
+				return iterator(_begin + _size);
 			}
 
 			const_iterator end() const {
-				return const_iterator(_end);
+				return const_iterator(_begin + _size);
 			}
 
 			reverse_iterator rbegin() {
-				return reverse_iterator(_end);
+				return reverse_iterator(_begin + _size);
 			}
 
 			const_reverse_iterator rbegin() const {
-				return const_reverse_iterator(_end);
+				return const_reverse_iterator(_begin + _size);
 			}
 
 			reverse_iterator rend() {
@@ -502,9 +508,11 @@ namespace ft
 			
 
 		private :
-			pointer _begin;
-			pointer _end;
-			ft::pair<pointer, allocator_type> _end_cap; // 두개의 객체(first, second)를 하나로 묶어주는 역할을 하는 struct로 데이터의 쌍을 표현할 때 사용
+			allocator_type	_alloc;
+			pointer 		_begin;
+			size_type		_size;
+			size_type		_capacity;
+			// ft::pair<pointer, allocator_type> _end_cap; // 두개의 객체(first, second)를 하나로 묶어주는 역할을 하는 struct로 데이터의 쌍을 표현할 때 사용
 	};
 }
 
