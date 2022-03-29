@@ -3,6 +3,7 @@
 #include <memory>
 #include <exception>
 #include <iostream>
+#include <memory>
 #include "../utils.hpp"
 #include "../iterator_traits.hpp"
 
@@ -116,7 +117,7 @@ namespace ft
 	{
 		return (lhs.base() == rhs.base());
 	}
-			
+
 	template <class Iterator>
 	bool operator!=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
 	{
@@ -140,7 +141,7 @@ namespace ft
 	{
 		return (lhs.base() > rhs.base());
 	}
-			
+
 	template <class Iterator>
 	bool operator>=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
 	{
@@ -158,13 +159,12 @@ namespace ft
 	{
 		return (rhs.base() - lhs.base());
 	}
-	
+
 	template <typename T>
 	class MyIterator : public ft::iterator<std::random_access_iterator_tag, T>
 	{
 		public :
-			// iterator_traits는 반복자와 배열의 포인터를 구분하기 위해서 만들어진 것
-			typedef typename ft::iterator<std::random_access_iterator_tag, T>::iterator_category iterator_category; // 나중에 어떤 타입인지 정보를 얻을 수 있게 하기위해 traits 사용
+			typedef typename ft::iterator<std::random_access_iterator_tag, T>::iterator_category iterator_category;
 			typedef typename ft::iterator<std::random_access_iterator_tag, T>::value_type        value_type;
 			typedef typename ft::iterator<std::random_access_iterator_tag, T>::difference_type   difference_type;
 			typedef typename ft::iterator<std::random_access_iterator_tag, T>::pointer           pointer;
@@ -181,8 +181,6 @@ namespace ft
 				ptr = mit.ptr;
 				return (*this);
 			}
-
-			virtual ~MyIterator() {}
 
 			template<class T1, class T2>
 			friend bool	operator==(MyIterator<T1> const &lhs, MyIterator<T2> const &rhs);
@@ -422,7 +420,7 @@ namespace ft
 				if (n > _capacity)
 				{
 					if (n > max_size())
-						throw (std::length_error("vector::_M_fill_insert"));
+						throw (std::length_error("reserve : over max size"));
 					pointer	tmp = _alloc.allocate(n);
 					for(size_type i = 0; i < _size; ++i)
 					{
@@ -450,13 +448,13 @@ namespace ft
 			reference		at(size_type n)
 			{
 				if (n >= _size)
-					throw (std::out_of_range("vector::_M_range_check"));
+					throw (std::out_of_range("at : over size"));
 				return (_begin[n]);
 			}
 			const_reference	at(size_type n) const
 			{
 				if (n >= _size)
-					throw (std::out_of_range("vector::_M_range_check"));
+					throw (std::out_of_range("const at : over size"));
 				return (_begin[n]);
 			}
 
@@ -519,35 +517,57 @@ namespace ft
 
 			iterator insert (iterator position, const value_type& val)
 			{
-				iterator it;
+				if (_capacity == 0)
+					_capacity = 1;
+				else if (_size == _capacity)
+					_capacity *= 2;
 
-				if (_size == _capacity) resize(_size);
-				it = end();
-				while (it != position)
-				{
-					*it = *(it -1);
-					it--;
-				}
-				_alloc.destroy(&(*position));
-				_alloc.construct(&(*position), val);
+				pointer tmp = _alloc.allocate(_capacity);
+				difference_type diff = position - begin();
+
+				std::uninitialized_copy(begin(), position, tmp);
+				 // position 앞 까지 복사
+				_alloc.construct(tmp + diff, val);
+				std::uninitialized_copy(position, end(), tmp + diff + 1);
+
+				for (size_type i = 0; i < _size; i++)
+					_alloc.destroy(_begin + i);
+				_alloc.deallocate(_begin, _size);
 				_size++;
+				_begin = tmp;
 
-				return position++;
+				return iterator(tmp + diff);
 			}
 
 			// TODO : insert 고치자 내일 ㅎㅎ
 			void insert (iterator position, size_type n, const value_type& val)
 			{ 
-				while (n-- > 0) insert(position, val);
+				if (_capacity == 0)
+					_capacity = 1;
+				else if (_size == _capacity)
+					_capacity *= 2;
+
+				pointer tmp = _alloc.allocate(_capacity);
+				difference_type diff = position - begin();
+
+				std::uninitialized_copy(begin(), position, tmp);
+				std::uninitialized_fill(tmp + diff, tmp + diff + n, val);
+				std::uninitialized_copy(position, end(), tmp + diff + n);
+
+				for (size_type i = 0; i < _size; i++)
+					_alloc.destroy(_begin + i);
+				_alloc.deallocate(_begin, _size);
+				_size += n;
+				_begin = tmp;
 			}
 
 			template <class InputIterator>
 			void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = NULL)
 			{
-				for (; first != last; first++)
+
+				for (; n > 0; n--)
 				{
-					insert(position, *(first));
-					position++;
+					_alloc.construct(tmp + diff + n, val);
 				}
 			}
 
@@ -645,7 +665,7 @@ namespace ft
 		private:
 			allocator_type	_alloc;
 			pointer			_begin;
-			size_type		_size;
+			size_type		_size; 
 			size_type		_capacity;
 	};
 }

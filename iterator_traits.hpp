@@ -18,11 +18,11 @@ namespace ft
 	template <class Iterator>
 	struct iterator_traits
 	{
-		typedef typename Iterator::difference_type 		difference_type;
-		typedef typename Iterator::value_type 			value_type;
+		typedef typename Iterator::difference_type 		difference_type; // 반복자끼리의 거리
+		typedef typename Iterator::value_type 			value_type; // 반복자가 가리키는 대상체의 타입
 		typedef typename Iterator::pointer 				pointer;
 		typedef typename Iterator::reference 			reference;
-		typedef typename Iterator::iterator_category 	iterator_category;
+		typedef typename Iterator::iterator_category 	iterator_category; // 반복자의 종류를 지정
 	};
 
 	template <class T>

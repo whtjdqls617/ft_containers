@@ -1,6 +1,7 @@
 #include "utils.hpp"
 #include "./vector/vector.hpp"
 #include <iostream>
+#include <vector>
 
 int main()
 {
@@ -15,8 +16,12 @@ std::cout << "myvector contains:";
     std::cout << ' ' << *it;
   std::cout << '\n';
 
-  myvector.insert (it,2,300);
 
+  myvector.insert (it,2,300);
+  it = myvector.begin();
+//   myvector.insert (it + 2,2,500);
+
+	std::cout << myvector.capacity() << std::endl;
 
     std::cout << "myvector contains:";
   for (it=myvector.begin(); it<myvector.end(); it++)
@@ -26,21 +31,23 @@ std::cout << "myvector contains:";
   // "it" no longer valid, get a new one:
   it = myvector.begin();
 
-  std::vector<int> anothervector (2,400);
-  myvector.insert (it+2,anothervector.begin(),anothervector.end());
+//   std::vector<int> anothervector (2,400);
+//   myvector.insert (it+2,anothervector.begin(),anothervector.end());
+// 	std::cout << myvector.capacity() << std::endl;
 
-      std::cout << "myvector contains:";
-  for (it=myvector.begin(); it<myvector.end(); it++)
-    std::cout << ' ' << *it;
-  std::cout << '\n';
+//       std::cout << "myvector contains:";
+//   for (it=myvector.begin(); it<myvector.end(); it++)
+//     std::cout << ' ' << *it;
+//   std::cout << '\n';
 
-  int myarray [] = { 501,502,503 };
-  myvector.insert (myvector.begin(), myarray, myarray+3);
+//   int myarray [] = { 501,502,503 };
+//   myvector.insert (myvector.begin(), myarray, myarray+3);
+// 	std::cout << myvector.capacity() << std::endl;
 
-  std::cout << "myvector contains:";
-  for (it=myvector.begin(); it<myvector.end(); it++)
-    std::cout << ' ' << *it;
-  std::cout << '\n';
+//   std::cout << "myvector contains:";
+//   for (it=myvector.begin(); it<myvector.end(); it++)
+//     std::cout << ' ' << *it;
+//   std::cout << '\n';
 
   return 0;
 }
