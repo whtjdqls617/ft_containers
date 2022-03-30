@@ -1,53 +1,44 @@
 #include "utils.hpp"
-#include "./vector/vector.hpp"
+#include "vector.hpp"
 #include <iostream>
 #include <vector>
 
-int main()
+
+void	checkErase(ft::vector<std::string>  &vct,
+					ft::vector<std::string>::iterator  &it)
 {
-  ft::vector<int> myvector (3,100);
-  ft::vector<int>::iterator it;
+	static int i = 0;
+	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
+	
+}
 
-  it = myvector.begin();
-  it = myvector.insert ( it , 200 );
+int		main(void)
+{
+	ft::vector<int> vct(10);
 
-std::cout << "myvector contains:";
-  for (it=myvector.begin(); it<myvector.end(); it++)
-    std::cout << ' ' << *it;
-  std::cout << '\n';
+	// for (unsigned long int i = 0; i < vct.size(); ++i)
+	// 	vct[i] = std::string((vct.size() - i), i + 65);
+	
 
+	// checkErase(vct, vct.erase(vct.begin() + 2));
 
-  myvector.insert (it,2,300);
-  it = myvector.begin();
-//   myvector.insert (it + 2,2,500);
+	// checkErase(vct, vct.erase(vct.begin()));
+	// checkErase(vct, vct.erase(vct.end() - 1));
 
-	std::cout << myvector.capacity() << std::endl;
+	// checkErase(vct, vct.erase(vct.begin(), vct.begin() + 3));
+	// checkErase(vct, vct.erase(vct.end() - 3, vct.end() - 1));
 
-    std::cout << "myvector contains:";
-  for (it=myvector.begin(); it<myvector.end(); it++)
-    std::cout << ' ' << *it;
-  std::cout << '\n';
+	// vct.push_back("Hello");
+	// vct.push_back("Hi there");
+	
+	// checkErase(vct, vct.erase(vct.end() - 3, vct.end()));
 
-  // "it" no longer valid, get a new one:
-  it = myvector.begin();
+	// vct.push_back("ONE");
+	// vct.push_back("TWO");
+	// vct.push_back("THREE");
+	// vct.push_back("FOUR");
+	
+	// checkErase(vct, vct.erase(vct.begin(), vct.end()));
 
-//   std::vector<int> anothervector (2,400);
-//   myvector.insert (it+2,anothervector.begin(),anothervector.end());
-// 	std::cout << myvector.capacity() << std::endl;
-
-//       std::cout << "myvector contains:";
-//   for (it=myvector.begin(); it<myvector.end(); it++)
-//     std::cout << ' ' << *it;
-//   std::cout << '\n';
-
-//   int myarray [] = { 501,502,503 };
-//   myvector.insert (myvector.begin(), myarray, myarray+3);
-// 	std::cout << myvector.capacity() << std::endl;
-
-//   std::cout << "myvector contains:";
-//   for (it=myvector.begin(); it<myvector.end(); it++)
-//     std::cout << ' ' << *it;
-//   std::cout << '\n';
-
-  return 0;
+	return (0);
 }
