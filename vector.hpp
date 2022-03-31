@@ -19,7 +19,7 @@ namespace ft
 			typedef typename iterator_traits<Iterator>::pointer pointer;
 			typedef typename iterator_traits<Iterator>::reference reference;
 
-			reverse_iterator() : _it() {} // explicit : 자동으로 형변환 되는 것을 막음 
+			reverse_iterator() : _it() {} // explicit : 자동으로 형변환 되는 것을 막음
 
 			explicit reverse_iterator(iterator_type it) : _it(it) {}
 
@@ -32,7 +32,7 @@ namespace ft
 				_it = rit.base();
 				return (*this);
 			}
-			
+
 			iterator_type	base() const
 			{
 				return _it;
@@ -63,7 +63,7 @@ namespace ft
 				_it--;
 				return tmp;
 			}
-			
+
 			reverse_iterator& operator+=(difference_type n)
 			{
 				_it -= n;
@@ -168,8 +168,8 @@ namespace ft
 			typedef typename iterator_traits<T*>::difference_type   difference_type;
 			typedef typename iterator_traits<T*>::pointer           pointer;
 			typedef typename iterator_traits<T*>::reference         reference;
-		
-			MyIterator() : ptr(NULL) {} // explicit : 자동으로 형변환 되는 것을 막음 
+
+			MyIterator() : ptr(NULL) {} // explicit : 자동으로 형변환 되는 것을 막음
 
 			MyIterator(pointer p) : ptr(p) {}
 
@@ -202,7 +202,7 @@ namespace ft
 
 			template<class T1, class T2>
 			friend typename MyIterator<T1>::difference_type	operator-(MyIterator<T1> const &lhs, MyIterator<T2> const &rhs);
-			
+
 			pointer	base() const
 			{
 				return ptr;
@@ -232,7 +232,7 @@ namespace ft
 				ptr++;
 				return tmp;
 			}
-			
+
 			MyIterator& operator+=(difference_type n)
 			{
 				ptr += n;
@@ -286,7 +286,7 @@ namespace ft
 	{
 		return (lhs.base() == rhs.base());
 	}
-			
+
 	template <class Iterator>
 	bool operator!=(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs)
 	{
@@ -310,7 +310,7 @@ namespace ft
 	{
 		return (lhs.base() > rhs.base());
 	}
-			
+
 	template <class Iterator>
 	bool operator>=(const MyIterator<Iterator>& lhs, const MyIterator<Iterator>& rhs)
 	{
@@ -366,14 +366,14 @@ namespace ft
 			{
 				*this = x;
 			}
-			
+
 			vector&	operator=(const vector& x) {
 				assign(x.begin(), x.end());
 				return (*this);
 			}
 
 			// ************************************ 소멸자 ************************************
-			
+
 			~vector() { _alloc.deallocate(_begin, _capacity); }
 
 			// ************************************ Capacity ************************************
@@ -401,21 +401,17 @@ namespace ft
 				{
 					for (size_type i = n; i < _size; i++)
 						_alloc.destroy(_begin + i);
-					_size = n;
-					return ;
 				}
 				else
 				{
 					if (n > 2 * _capacity)
 						reserve(n);
 					else if (n < 2 * _capacity && n > _capacity)
-					{
 						reserve(2 * _capacity);
-					}
 					for (size_type i = _size; i < n; i++)
 						_alloc.construct(_begin + i, val);
-					_size = n;
 				}
+				_size = n;
 			}
 
 
@@ -423,7 +419,7 @@ namespace ft
 			{
 				return(_size == 0);
 			}
-			
+
 			void		reserve(size_type n)
 			{
 				if (n > _capacity)
@@ -492,41 +488,28 @@ namespace ft
 			template<class InputIterator>
 			void 	assign(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = NULL)
 			{
-				resize(0);
+				clear();
 				size_type		n = 0;
 				InputIterator	tmp = first;
 				while (tmp++ != last)
 					++n;
-				resize(n);
+				if (n > _capacity)
+					reserve(n);
+				_size = n;
 				InputIterator it2 = first;
-				for(iterator it1 = begin(); it2 != last; ++it1)
-				{
-					_alloc.construct(&(*it1), *it2);
-					++it2;
-				}
+				for(iterator it1 = begin(); it2 != last; it1++)
+					_alloc.construct(&(*it1), *(it2++));
 			}
 
 			void	assign(size_type n, const value_type& val)
 			{
 				clear();
-				resize(n);
+				if (n > _capacity)
+					reserve(n);
+				_size = n;
 				for(iterator it = begin(); it != end(); ++it)
 					_alloc.construct(&(*it), val);
 			}
-
-			// void assign (size_type n, const value_type& val)
-			// {
-			// 	clear();
-			// 	if (_capacity < n)
-			// 	{
-			// 		reserve(n);
-			// 		while (n--)
-			// 			_alloc.construct(_end++, val);
-			// 	}
-			// 	else
-			// 		while (n--)
-			// 			_alloc.construct(_end++, val);
-			// }
 
 			void	pop_back()
 			{
@@ -565,7 +548,7 @@ namespace ft
 			}
 
 			void insert (iterator position, size_type n, const value_type& val)
-			{ 
+			{
 				if (_capacity == 0)
 					_capacity = n;
 				else if (_capacity < _size + n && _capacity * 2 > _size + n)
@@ -590,12 +573,6 @@ namespace ft
 			template <class InputIterator>
 			void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = NULL)
 			{
-				// if (_capacity == 0)
-				// 	_capacity = std::distance(first, last);
-				// else if (_capacity < _size + std::distance(first, last) && _capacity * 2 > _size + std::distance(first, last))
-				// 	_capacity *= 2;
-				// else if (_capacity * 2 < _size + std::distance(first, last))
-				// 	_capacity = _size + std::distance(first, last);
 				if (_capacity * 2 > _size + std::distance(first, last))
 					_capacity *= 2;
 				else if (_size + std::distance(first, last) > _capacity)
@@ -622,15 +599,25 @@ namespace ft
 			iterator erase(iterator position)
 			{
 				_alloc.destroy(&*position);
-				_size--;
+				for (iterator it = position; it != end(); it++)
+				{
+					_alloc.construct(&*it, *(it + 1));
+					_alloc.destroy(&*it);
+				}
+				_size -= 1;
 				return position;
 			}
 
 			iterator erase(iterator first, iterator last)
 			{
-				size_type n = std::distance(first, last);
-				for (iterator it = first; n > 0; n--)
-					erase(it);
+				for (iterator it = first; it != last; it++)
+					_alloc.destroy(&*it);
+				for (iterator it = last; it != end(); it++)
+				{
+					_alloc.construct(&*(first + std::distance(last, it)), *it);
+					_alloc.destroy(&*it);
+				}
+				_size -= std::distance(first, last);
 				return first;
 			}
 
@@ -709,7 +696,7 @@ namespace ft
 		private:
 			allocator_type	_alloc;
 			pointer			_begin;
-			size_type		_size; 
+			size_type		_size;
 			size_type		_capacity;
 	};
 
