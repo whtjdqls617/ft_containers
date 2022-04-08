@@ -233,7 +233,7 @@ namespace ft
 
 			const_iterator begin() const
 			{
-
+				return(const_iterator(begin()));
 			}
 
 			iterator end();
