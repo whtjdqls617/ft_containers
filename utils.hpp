@@ -149,6 +149,34 @@ namespace ft
 	};
 
 	template <typename T1, typename T2>
+	struct pair<const T1, T2> // 부분 특수화 => T1의 타입이 const일 때 위에서 const에 할당을 하려해서 터졌는데, 이를 해결하기위해 아래와같이 진행하였다. 이 부분특수화는 const를 억지로 제거하는 느낌임
+	{
+		typedef T1 first_type;
+		typedef T2 second_type;
+
+		first_type first;
+		second_type second;
+
+		pair() : first(), second() {}
+
+		template <typename A, typename B>
+		pair(const pair<A, B> &_pair)
+		{
+			first = _pair.first;
+			second = _pair.second;
+		}
+
+		pair(const first_type &a, const second_type &b) : first(a), second(b) {}
+
+		pair &operator=(const pair &src)
+		{
+			first = src.first;
+			second = src.second;
+			return (*this);
+		}
+	};
+
+	template <typename T1, typename T2>
 	pair<T1, T2> make_pair (T1 a, T2 b)
 	{
 		return (pair<T1, T2> (a, b));
