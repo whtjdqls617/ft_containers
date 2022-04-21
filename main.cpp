@@ -1,22 +1,68 @@
-#include "utils.hpp"
 #include "map.hpp"
 
-int		main(void)
+#define T1 int
+#define T2 std::string
+
+template <typename T>
+std::string printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
 {
-	int key = 1;
-	std::string value = "42";
-	ft::pair<int, std::string> pair1 = ft::make_pair<int, std::string>(key, value);
-	ft::pair<int, std::string> pair2 = ft::make_pair<int, std::string>(2, value);
-	ft::pair<int, std::string> pair3 = ft::make_pair<int, std::string>(3, value);
+	o << "key: " << iterator->first << " | value: " << iterator->second;
+	if (nl)
+		o << std::endl;
+	return ("");
+}
 
-	ft::map<int, std::string> map1;
-	std::cout << map1.size() << std::endl;
-	ft::map<int, std::string>::iterator it;
-	std::cout << it.base() << std::endl;
+struct ft_more
+{
+	bool operator()(const T1 &first, const T1 &second) const
+	{
+		return (first > second);
+	}
+};
 
-	map1.insert(pair1);
-	// map1.insert(pair2);
-	// map1.insert(pair3);
+typedef ft::map<T1, T2, ft_more> ft_mp;
+typedef ft::map<T1, T2, ft_more>::iterator ft_mp_it;
 
-	return (0);
+template <typename T_MAP>
+void printSize(T_MAP const &mp, bool print_content = 1)
+{
+	std::cout << "size: " << mp.size() << std::endl;
+	std::cout << "max_size: " << mp.max_size() << std::endl;
+	if (print_content)
+	{
+		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
+		std::cout << std::endl
+				  << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << printPair(it, false) << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
+}
+
+void func()
+{
+
+	ft_mp mp;
+	mp[42] = "fgzgxfn";
+	mp[25] = "funny";
+	mp[80] = "hey";
+	mp[12] = "no";
+	mp[27] = "bee";
+	mp[90] = "8";
+	printSize(mp);
+
+	// ft::map<int, std::string>::iterator it = mp.begin();
+	// for (; it != mp.end(); it++)
+	// 	std::cout << (*it).first << std::endl;
+}
+
+int main()
+{
+	func();
+	// while (1)
+	// {
+
+	// }
+
+	return 0;
 }
