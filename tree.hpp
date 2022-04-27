@@ -293,7 +293,7 @@ namespace ft
 
 			~Tree()
 			{
-				clear();
+				// clear();
 				_node_alloc.destroy(_super_root);
 				_node_alloc.deallocate(_super_root, 1);
 			}
@@ -434,6 +434,7 @@ namespace ft
 					tmp->_left = new_node;
 					new_node->_parent = tmp;
 				}
+				rebalance_tree(new_node);
 				return (ft::make_pair<iterator, bool>(new_node, true));
 			}
 
@@ -465,7 +466,6 @@ namespace ft
 				// 자식이 없을 때
 				if (!(tmp_it.base()->_left) && !(tmp_it.base()->_right))
 				{
-					// 삭제 노드가 왼쪽 자식일 때
 					if (tmp_it.base() == _root)
 					{
 						_super_root->_left = NULL;
@@ -550,8 +550,11 @@ namespace ft
 							tmp_it.base()->_parent->_left = NULL;
 					}
 				}
+				Node<T> *start_node = tmp_it.base()->_parent;
 				_node_alloc.destroy(tmp_it.base());
 				_node_alloc.deallocate(tmp_it.base(), 1);
+				if (start_node != _super_root)
+					rebalance_tree(start_node);
 				return 1;
 			}
 
@@ -637,6 +640,140 @@ namespace ft
 			size_type max_size() const // 이 부분은 노드의 변수 개수에 따라 잘리진다.
 			{
 				return (_node_alloc.max_size());
+			}
+
+			int get_balance_factor(iterator it)
+			{
+				Node<T> *tmp = it.base();
+
+				int l_depth = 0;
+				int r_depth = 0;
+				l_depth = get_depth(tmp->_left);
+				r_depth = get_depth(tmp->_right);
+				return (l_depth - r_depth);
+			}
+
+			int		get_depth(Node<T> *tmp)
+			{
+				int depth = 0;
+				int l_depth = 0;
+				int r_depth = 0;
+				int max_depth = 0;
+
+				if (tmp)
+				{
+					// l_depth = get_depth(tmp->_left);
+					// r_depth = get_depth(tmp->_right);
+					// max_depth = std::max(l_depth, r_depth);
+					// depth = max_depth + 1;
+					while (tmp->_left || tmp->_right)
+					{
+						if (tmp->_left)
+						{
+							tmp = tmp->_left;
+							depth++;
+						}
+						if (tmp->_right)
+						{
+							tmp = tmp->_right;
+							depth++;
+						}
+					}
+				}
+				return depth;
+			}
+
+			void	rebalance_tree(Node<T> *new_node)
+			{
+				Node<T> *tmp = new_node;
+				int	balance_factor;
+
+				if (tmp == _super_root)
+					return ;
+				while (tmp->_parent)
+				{
+					balance_factor = get_balance_factor(iterator(tmp));
+					if (balance_factor > 1 || balance_factor < -1)
+						break;
+					tmp = tmp->_parent;
+				}
+				if (balance_factor > 1)
+				{
+					// LL
+					if (tmp->_left && get_balance_factor(iterator(tmp->_left)) > 0)
+						tmp = RotateLL(tmp);
+					// LR
+					else if (tmp->_left && get_balance_factor(iterator(tmp->_left)) < 0)
+						tmp = RotateLR(tmp);
+				}
+				else if (balance_factor < -1)
+				{
+					// RR
+					if (tmp->_right && get_balance_factor(iterator(tmp->_right)) < 0)
+						tmp = RotateRR(tmp);
+					// RL
+					else if (tmp->_right && get_balance_factor(iterator(tmp->_right)) > 0)
+						tmp = RotateRL(tmp);
+				}
+			}
+
+			Node<T> *RotateLL(Node<T> *current)
+			{
+				Node<T> *tmp;
+				tmp = current->_left;
+				current->_left = current->_left->_right;
+				tmp->_right = current;
+				tmp->_parent = current->_parent;
+				current->_parent->_left = tmp;
+				current->_parent = tmp;
+				if (current->_parent == _root)
+					_root->_left = tmp;
+				if (current == _root)
+				{
+					_root = tmp;
+					_root->_parent = _super_root;
+					_super_root->_left = _root;
+				}
+				std::cout << "LL" << std::endl;
+				return tmp;
+			}
+
+			Node<T> *RotateRR(Node<T> *current)
+			{
+				Node<T> *tmp;
+				tmp = current->_right;
+				current->_right = current->_right->_left;
+				tmp->_left = current;
+				tmp->_parent = current->_parent;
+				current->_parent->_right = tmp;
+				current->_parent = tmp;
+				if (current->_parent == _root)
+					_root->_right = tmp;
+				if (current == _root)
+				{
+					_root = tmp;
+					_root->_parent = _super_root;
+					_super_root->_left = _root;
+				}
+				std::cout << "RR" << std::endl;
+
+				return tmp;
+			}
+
+			Node<T> *RotateLR(Node<T> *current)
+			{
+				current->_left = RotateRR(current->_left);
+				std::cout << "LR" << std::endl;
+
+				return RotateLL(current);
+			}
+
+			Node<T> *RotateRL(Node<T> *current)
+			{
+				current->_right = RotateLL(current->_right);
+				std::cout << "RL" << std::endl;
+
+				return RotateRR(current);
 			}
 
 		private :
