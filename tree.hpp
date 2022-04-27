@@ -286,8 +286,8 @@ namespace ft
 				_node_alloc = src._node_alloc;
 				if (_root)
 					clear();
-				for (const_iterator it = src.begin(); it != src.end(); it++)
-					insert(*it);
+				if (src._root)
+					preorder(iterator(src._root));
 				return (*this);
 			}
 
@@ -296,6 +296,19 @@ namespace ft
 				// clear();
 				_node_alloc.destroy(_super_root);
 				_node_alloc.deallocate(_super_root, 1);
+			}
+
+			// 전위 순회 (그대로 복사하기위해 사용)
+			void preorder(iterator it)
+			{
+				if (it.base()->_left || it.base()->_right)
+				{
+					insert(*it);
+					if (it.base()->_left)
+						preorder(it.base()->_left);
+					if (it.base()->_right)
+						preorder(it.base()->_right);
+				}
 			}
 
 			// Iterator
@@ -593,8 +606,6 @@ namespace ft
 
 			void	clear()
 			{
-				// for (iterator it = begin(); it != end(); it++)
-				// 	std::cout << (*it).first << std::endl;
 				while (_root)
 				{
 					Node<T> *tmp = _root;
