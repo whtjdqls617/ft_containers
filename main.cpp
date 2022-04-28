@@ -14,7 +14,7 @@ namespace ft = std;
 
 #include <stdlib.h>
 
-#define MAX_RAM 4294967
+#define MAX_RAM 4294967296
 #define BUFFER_SIZE 4096
 struct Buffer
 {

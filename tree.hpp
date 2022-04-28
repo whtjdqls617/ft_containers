@@ -701,7 +701,7 @@ namespace ft
 
 				if (tmp == _super_root)
 					return ;
-				while (tmp->_parent)
+				while (tmp != _super_root)
 				{
 					balance_factor = get_balance_factor(iterator(tmp));
 					if (balance_factor > 1 || balance_factor < -1)
@@ -711,64 +711,56 @@ namespace ft
 				if (balance_factor > 1)
 				{
 					// LL
-					if (tmp->_left && get_balance_factor(iterator(tmp->_left)) > 0)
+					if (get_balance_factor(iterator(tmp->_left)) > 0)
 						tmp = RotateLL(tmp);
 					// LR
-					else if (tmp->_left && get_balance_factor(iterator(tmp->_left)) < 0)
+					else
 						tmp = RotateLR(tmp);
 				}
 				else if (balance_factor < -1)
 				{
 					// RR
-					if (tmp->_right && get_balance_factor(iterator(tmp->_right)) < 0)
+					if (get_balance_factor(iterator(tmp->_right)) < 0)
 						tmp = RotateRR(tmp);
 					// RL
-					else if (tmp->_right && get_balance_factor(iterator(tmp->_right)) > 0)
+					else
 						tmp = RotateRL(tmp);
 				}
 			}
 
 			Node<T> *RotateLL(Node<T> *current)
 			{
-				Node<T> *tmp;
-				tmp = current->_left;
-				current->_left = current->_left->_right;
-				tmp->_right = current;
-				tmp->_parent = current->_parent;
-				current->_parent->_left = tmp;
-				current->_parent = tmp;
-				if (current->_parent == _root)
-					_root->_left = tmp;
-				if (current == _root)
-				{
-					_root = tmp;
-					_root->_parent = _super_root;
-					_super_root->_left = _root;
-				}
+				Node<T> *p_node;
+				Node<T> *c_node;
+
+				p_node = current;
+				c_node = current->_left;
+				p_node->_left = c_node->_right;
+				if (c_node->_right)
+					c_node->_right->_parent = p_node;
+				c_node->_right = p_node;
+				c_node->_parent = p_node->_parent;
+				p_node->_parent = c_node;
 				std::cout << "LL" << std::endl;
-				return tmp;
+				return c_node;
 			}
 
 			Node<T> *RotateRR(Node<T> *current)
 			{
-				Node<T> *tmp;
-				tmp = current->_right;
-				current->_right = current->_right->_left;
-				tmp->_left = current;
-				tmp->_parent = current->_parent;
-				current->_parent->_right = tmp;
-				current->_parent = tmp;
-				if (current->_parent == _root)
-					_root->_right = tmp;
-				if (current == _root)
-				{
-					_root = tmp;
-					_root->_parent = _super_root;
-					_super_root->_left = _root;
-				}
+				Node<T> *p_node;
+				Node<T> *c_node;
+
+				p_node = current;
+				c_node = current->_right;
+				p_node->_right = c_node->_left;
+				if (c_node->_left)
+					c_node->_left->_parent = p_node;
+				c_node->_left = p_node;
+				c_node->_parent = p_node->_parent;
+				p_node->_parent = c_node;
 				std::cout << "RR" << std::endl;
 
-				return tmp;
+				return c_node;
 			}
 
 			Node<T> *RotateLR(Node<T> *current)
