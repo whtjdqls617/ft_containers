@@ -286,29 +286,15 @@ namespace ft
 				_node_alloc = src._node_alloc;
 				if (_root)
 					clear();
-				if (src._root)
-					preorder(iterator(src._root));
+				insert(src.begin(), src.end());
 				return (*this);
 			}
 
 			~Tree()
 			{
-				// clear();
+				clear();
 				_node_alloc.destroy(_super_root);
 				_node_alloc.deallocate(_super_root, 1);
-			}
-
-			// 전위 순회 (그대로 복사하기위해 사용)
-			void preorder(iterator it)
-			{
-				if (it.base()->_left || it.base()->_right)
-				{
-					insert(*it);
-					if (it.base()->_left)
-						preorder(it.base()->_left);
-					if (it.base()->_right)
-						preorder(it.base()->_right);
-				}
 			}
 
 			// Iterator
@@ -666,17 +652,10 @@ namespace ft
 
 			int		get_depth(Node<T> *tmp)
 			{
-				int depth = 0;
-				int l_depth = 0;
-				int r_depth = 0;
-				int max_depth = 0;
+				int depth = 1;
 
 				if (tmp)
 				{
-					// l_depth = get_depth(tmp->_left);
-					// r_depth = get_depth(tmp->_right);
-					// max_depth = std::max(l_depth, r_depth);
-					// depth = max_depth + 1;
 					while (tmp->_left || tmp->_right)
 					{
 						if (tmp->_left)
@@ -691,6 +670,8 @@ namespace ft
 						}
 					}
 				}
+				else
+					return 0;
 				return depth;
 			}
 
@@ -735,13 +716,23 @@ namespace ft
 
 				p_node = current;
 				c_node = current->_left;
-				p_node->_left = c_node->_right;
-				if (c_node->_right)
+				if (p_node == _root)
+					_root = c_node;
+				if (!c_node->_right)
+					p_node->_left = NULL;
+				else
+				{
 					c_node->_right->_parent = p_node;
+					p_node->_left = c_node->_right;
+				}
 				c_node->_right = p_node;
 				c_node->_parent = p_node->_parent;
+				if (p_node == p_node->_parent->_left)
+					p_node->_parent->_left = c_node;
+				else
+					p_node->_parent->_right = c_node;
 				p_node->_parent = c_node;
-				std::cout << "LL" << std::endl;
+				// std::cout << "LL" << std::endl;
 				return c_node;
 			}
 
@@ -752,13 +743,23 @@ namespace ft
 
 				p_node = current;
 				c_node = current->_right;
-				p_node->_right = c_node->_left;
-				if (c_node->_left)
+				if (p_node == _root)
+					_root = c_node;
+				if (!c_node->_left)
+					p_node->_right = NULL;
+				else
+				{
 					c_node->_left->_parent = p_node;
+					p_node->_right = c_node->_left;
+				}
 				c_node->_left = p_node;
 				c_node->_parent = p_node->_parent;
+				if (p_node == p_node->_parent->_left)
+					p_node->_parent->_left = c_node;
+				else
+					p_node->_parent->_right = c_node;
 				p_node->_parent = c_node;
-				std::cout << "RR" << std::endl;
+				// std::cout << "RR" << std::endl;
 
 				return c_node;
 			}
@@ -766,7 +767,7 @@ namespace ft
 			Node<T> *RotateLR(Node<T> *current)
 			{
 				current->_left = RotateRR(current->_left);
-				std::cout << "LR" << std::endl;
+				// std::cout << "LR" << std::endl;
 
 				return RotateLL(current);
 			}
@@ -774,7 +775,7 @@ namespace ft
 			Node<T> *RotateRL(Node<T> *current)
 			{
 				current->_right = RotateLL(current->_right);
-				std::cout << "RL" << std::endl;
+				// std::cout << "RL" << std::endl;
 
 				return RotateRR(current);
 			}
