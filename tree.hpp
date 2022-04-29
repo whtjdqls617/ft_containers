@@ -286,7 +286,8 @@ namespace ft
 				_node_alloc = src._node_alloc;
 				if (_root)
 					clear();
-				insert(src.begin(), src.end());
+				if (src._root)
+					preorder(iterator(src._root));
 				return (*this);
 			}
 
@@ -295,6 +296,18 @@ namespace ft
 				clear();
 				_node_alloc.destroy(_super_root);
 				_node_alloc.deallocate(_super_root, 1);
+			}
+
+			void preorder(iterator it)
+			{
+				if (it.base()->_left || it.base()->_right)
+				{
+					insert(*it);
+					if (it.base()->_left)
+						preorder(it.base()->_left);
+					if (it.base()->_right)
+						preorder(it.base()->_right);
+				}
 			}
 
 			// Iterator
@@ -433,7 +446,7 @@ namespace ft
 					tmp->_left = new_node;
 					new_node->_parent = tmp;
 				}
-				rebalance_tree(new_node);
+				// rebalance_tree(new_node);
 				return (ft::make_pair<iterator, bool>(new_node, true));
 			}
 
@@ -549,11 +562,11 @@ namespace ft
 							tmp_it.base()->_parent->_left = NULL;
 					}
 				}
-				Node<T> *start_node = tmp_it.base()->_parent;
+				// Node<T> *start_node = tmp_it.base()->_parent;
 				_node_alloc.destroy(tmp_it.base());
 				_node_alloc.deallocate(tmp_it.base(), 1);
-				if (start_node != _super_root)
-					rebalance_tree(start_node);
+				// if (start_node != _super_root)
+				// 	rebalance_tree(start_node);
 				return 1;
 			}
 
@@ -652,32 +665,44 @@ namespace ft
 
 			int		get_depth(Node<T> *tmp)
 			{
-				int depth = 0;
-				int l_depth = 0;
-				int r_depth = 0;
-				int max_depth = 0;
+				// int depth = 0;
+				// int l_depth = 0;
+				// int r_depth = 0;
+				// int max_depth = 0;
 
-				if (tmp)
-				{
-					// while (tmp->_left || tmp->_right)
-					// {
-					// 	if (tmp->_left)
-					// 	{
-					// 		tmp = tmp->_left;
-					// 		depth++;
-					// 	}
-					// 	if (tmp->_right)
-					// 	{
-					// 		tmp = tmp->_right;
-					// 		depth++;
-					// 	}
-					// }
-					l_depth = get_depth(tmp->_left);
-					r_depth = get_depth(tmp->_right);
-					max_depth = std::max(l_depth, r_depth);
-					depth = max_depth + 1;
-				}
-				return depth;
+				// if (tmp)
+				// {
+				// 	// while (tmp->_left || tmp->_right)
+				// 	// {
+				// 	// 	if (tmp->_left)
+				// 	// 	{
+				// 	// 		tmp = tmp->_left;
+				// 	// 		depth++;
+				// 	// 	}
+				// 	// 	if (tmp->_right)
+				// 	// 	{
+				// 	// 		tmp = tmp->_right;
+				// 	// 		depth++;
+				// 	// 	}
+				// 	// }
+				// 	l_depth = get_depth(tmp->_left);
+				// 	r_depth = get_depth(tmp->_right);
+				// 	max_depth = std::max(l_depth, r_depth);
+				// 	depth = max_depth + 1;
+				// }
+				int l_height;
+				int r_height;
+
+				if (!tmp)
+					return 0;
+				l_height = get_depth(tmp->_left);
+				r_height = get_depth(tmp->_right);
+
+				if (l_height > r_height)
+					return (l_height + 1);
+				else
+					return (r_height + 1);
+				// return depth;
 			}
 
 			void	rebalance_tree(Node<T> *new_node)

@@ -22,8 +22,7 @@ struct Buffer
 	char buff[BUFFER_SIZE];
 };
 
-// #define COUNT (MAX_RAM / (int)sizeof(Buffer))
-#define COUNT 100000
+#define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
 template <typename T>
 class MutantStack : public ft::stack<T>
@@ -89,8 +88,6 @@ int main(int argc, char **argv)
 		// NORMAL ! :P
 	}
 
-	// custom
-	std::cout << COUNT << std::endl;
 	for (int i = 0; i < COUNT; ++i)
 	{
 		map_int.insert(ft::make_pair(rand(), rand()));
