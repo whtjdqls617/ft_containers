@@ -652,26 +652,31 @@ namespace ft
 
 			int		get_depth(Node<T> *tmp)
 			{
-				int depth = 1;
+				int depth = 0;
+				int l_depth = 0;
+				int r_depth = 0;
+				int max_depth = 0;
 
 				if (tmp)
 				{
-					while (tmp->_left || tmp->_right)
-					{
-						if (tmp->_left)
-						{
-							tmp = tmp->_left;
-							depth++;
-						}
-						if (tmp->_right)
-						{
-							tmp = tmp->_right;
-							depth++;
-						}
-					}
+					// while (tmp->_left || tmp->_right)
+					// {
+					// 	if (tmp->_left)
+					// 	{
+					// 		tmp = tmp->_left;
+					// 		depth++;
+					// 	}
+					// 	if (tmp->_right)
+					// 	{
+					// 		tmp = tmp->_right;
+					// 		depth++;
+					// 	}
+					// }
+					l_depth = get_depth(tmp->_left);
+					r_depth = get_depth(tmp->_right);
+					max_depth = std::max(l_depth, r_depth);
+					depth = max_depth + 1;
 				}
-				else
-					return 0;
 				return depth;
 			}
 
