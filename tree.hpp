@@ -17,12 +17,13 @@ namespace ft
 			Node 			*_left;
 			Node	 		*_right;
 			value_type		_value;
+			int				_height;
 
-			Node() : _parent(NULL), _left(NULL), _right(NULL), _value() {}
+			Node() : _parent(NULL), _left(NULL), _right(NULL), _value(), _height(1) {}
 
-			Node(Node *parent, Node *left, Node *right, const value_type &value) : _parent(parent), _left(left), _right(right), _value(value) {}
+			Node(Node *parent, Node *left, Node *right, const value_type &value, int height) : _parent(parent), _left(left), _right(right), _value(value), _height(height) {}
 
-			Node(const Node &src) : _parent(src._parent), _left(src._left), _right(src._right), _value(src._value)
+			Node(const Node &src) : _parent(src._parent), _left(src._left), _right(src._right), _value(src._value), _height(src._height)
 			{}
 
 			~Node() {}
@@ -33,6 +34,7 @@ namespace ft
 				_left = src._left;
 				_right = src._right;
 				_value = src._value;
+				_height = src._height;
 				return (*this);
 			}
 	};
@@ -286,8 +288,7 @@ namespace ft
 				_node_alloc = src._node_alloc;
 				if (_root)
 					clear();
-				if (src._root)
-					preorder(iterator(src._root));
+				insert(src.begin(), src.end());
 				return (*this);
 			}
 
@@ -296,18 +297,6 @@ namespace ft
 				clear();
 				_node_alloc.destroy(_super_root);
 				_node_alloc.deallocate(_super_root, 1);
-			}
-
-			void preorder(iterator it)
-			{
-				if (it.base()->_left || it.base()->_right)
-				{
-					insert(*it);
-					if (it.base()->_left)
-						preorder(it.base()->_left);
-					if (it.base()->_right)
-						preorder(it.base()->_right);
-				}
 			}
 
 			// Iterator
@@ -422,7 +411,7 @@ namespace ft
 
 				if (tmp == _super_root)
 				{
-					_node_alloc.construct(new_node, Node<T>(0, 0, 0, val));
+					_node_alloc.construct(new_node, Node<T>(0, 0, 0, val, 1));
 					_root = new_node;
 					_super_root->_left = _root;
 					_root->_parent = _super_root;
@@ -436,18 +425,88 @@ namespace ft
 				}
 				if (_key_compare(tmp->_value.first, val.first))
 				{
-					_node_alloc.construct(new_node, Node<T>(0, 0, 0, val));
+					_node_alloc.construct(new_node, Node<T>(0, 0, 0, val, 1));
 					tmp->_right = new_node;
 					new_node->_parent = tmp;
 				}
 				else if (_key_compare(val.first, tmp->_value.first))
 				{
-					_node_alloc.construct(new_node, Node<T>(0, 0, 0, val));
+					_node_alloc.construct(new_node, Node<T>(0, 0, 0, val, 1));
 					tmp->_left = new_node;
 					new_node->_parent = tmp;
 				}
-				// rebalance_tree(new_node);
+				new_node->_height = 1;
+				tmp = new_node;
+				// 삽입 노드 위로 height 갱신
+				while (tmp->_parent != _super_root)
+				{
+					if (tmp->_height == tmp->_parent->_height)
+						tmp->_parent->_height += 1;
+					tmp = tmp->_parent;
+				}
+				int max_height = _root->_height;
+
+				// 새롭게 갱신
+				if (rebalance_tree(new_node) == 1)
+				{
+					_root->_height = max_height - 1;
+					// preorder_for_update(_root);
+				}
+
+				// 전위 순회로 height 갱신
 				return (ft::make_pair<iterator, bool>(new_node, true));
+			}
+
+			void update_up(Node<T> *tmp)
+			{
+				while (tmp)
+				{
+					if (tmp == _super_root)
+						return ;
+					// 내가 왼쪽 자식일 때 부모의 오른쪽자식이 있을 때 height를 비교해서 내가 더 작으면 return, 내가 더 크면 부모로 이동 후 ++
+					if (tmp == tmp->_parent->_left)
+					{
+						if (tmp->_parent->_right)
+						{
+							if (tmp->_parent->_right->_height > tmp->_height)
+								return ;
+							else
+							{
+								tmp->_parent->_height = tmp->_height + 1;
+								tmp = tmp->_parent;
+							}
+						}
+						// 내가 완쪽 자식일 때 부모의 오른쪽 자식이 없으면 부모로 이동 후 ++
+						else
+						{
+							tmp = tmp->_parent;
+							tmp->_height++;
+						}
+					}
+					else if (tmp == tmp->_parent->_right)
+					{
+						if (tmp->_parent->_left)
+						{
+							if (tmp->_parent->_left->_height > tmp->_height)
+								return ;
+							else
+							{
+								tmp->_parent->_height = tmp->_height + 1;
+								tmp = tmp->_parent;
+							}
+						}
+						else
+						{
+							tmp->_parent->_height = tmp->_height + 1;
+							tmp = tmp->_parent;
+						}
+					}
+					// 내가 오른쪽 자식일 때 부모의 왼쪽자식이 있을 때 height를 비교해서 내가 더 작으면 return, 내가 더 크면 부모로 이둥 후 ++
+
+					// 내가 오른쪽 자식일 때 부모의 왼쪽자식이 없으면 부모로 이동 후 ++
+
+
+				}
 			}
 
 			iterator insert(iterator position, const value_type &val)
@@ -562,11 +621,13 @@ namespace ft
 							tmp_it.base()->_parent->_left = NULL;
 					}
 				}
-				// Node<T> *start_node = tmp_it.base()->_parent;
+				Node<T> *start_node = tmp_it.base()->_parent;
 				_node_alloc.destroy(tmp_it.base());
 				_node_alloc.deallocate(tmp_it.base(), 1);
-				// if (start_node != _super_root)
-				// 	rebalance_tree(start_node);
+				start_node->_height = 1;
+				update_up(start_node);
+				if (start_node != _super_root)
+					rebalance_tree(start_node);
 				return 1;
 			}
 
@@ -658,60 +719,20 @@ namespace ft
 
 				int l_depth = 0;
 				int r_depth = 0;
-				l_depth = get_depth(tmp->_left);
-				r_depth = get_depth(tmp->_right);
+				if (tmp->_left)
+					l_depth = tmp->_left->_height;
+				if (tmp->_right)
+					r_depth = tmp->_right->_height;
 				return (l_depth - r_depth);
 			}
 
-			int		get_depth(Node<T> *tmp)
-			{
-				// int depth = 0;
-				// int l_depth = 0;
-				// int r_depth = 0;
-				// int max_depth = 0;
-
-				// if (tmp)
-				// {
-				// 	// while (tmp->_left || tmp->_right)
-				// 	// {
-				// 	// 	if (tmp->_left)
-				// 	// 	{
-				// 	// 		tmp = tmp->_left;
-				// 	// 		depth++;
-				// 	// 	}
-				// 	// 	if (tmp->_right)
-				// 	// 	{
-				// 	// 		tmp = tmp->_right;
-				// 	// 		depth++;
-				// 	// 	}
-				// 	// }
-				// 	l_depth = get_depth(tmp->_left);
-				// 	r_depth = get_depth(tmp->_right);
-				// 	max_depth = std::max(l_depth, r_depth);
-				// 	depth = max_depth + 1;
-				// }
-				int l_height;
-				int r_height;
-
-				if (!tmp)
-					return 0;
-				l_height = get_depth(tmp->_left);
-				r_height = get_depth(tmp->_right);
-
-				if (l_height > r_height)
-					return (l_height + 1);
-				else
-					return (r_height + 1);
-				// return depth;
-			}
-
-			void	rebalance_tree(Node<T> *new_node)
+			int	rebalance_tree(Node<T> *new_node)
 			{
 				Node<T> *tmp = new_node;
 				int	balance_factor;
 
 				if (tmp == _super_root)
-					return ;
+					return (0);
 				while (tmp != _super_root)
 				{
 					balance_factor = get_balance_factor(iterator(tmp));
@@ -722,21 +743,28 @@ namespace ft
 				if (balance_factor > 1)
 				{
 					// LL
-					if (get_balance_factor(iterator(tmp->_left)) > 0)
+					if (get_balance_factor(iterator(tmp->_left)) >= 0)
 						tmp = RotateLL(tmp);
 					// LR
 					else
 						tmp = RotateLR(tmp);
+					_root = _super_root->_left;
+					update_up(tmp);
+					return (1);
 				}
 				else if (balance_factor < -1)
 				{
 					// RR
-					if (get_balance_factor(iterator(tmp->_right)) < 0)
+					if (get_balance_factor(iterator(tmp->_right)) <= 0)
 						tmp = RotateRR(tmp);
 					// RL
 					else
 						tmp = RotateRL(tmp);
+					_root = _super_root->_left;
+					update_up(tmp);
+					return (1);
 				}
+				return (0);
 			}
 
 			Node<T> *RotateLL(Node<T> *current)
@@ -746,8 +774,9 @@ namespace ft
 
 				p_node = current;
 				c_node = current->_left;
-				if (p_node == _root)
-					_root = c_node;
+				p_node->_height -= 2;
+				if (!c_node)
+					return c_node;
 				if (!c_node->_right)
 					p_node->_left = NULL;
 				else
@@ -773,8 +802,9 @@ namespace ft
 
 				p_node = current;
 				c_node = current->_right;
-				if (p_node == _root)
-					_root = c_node;
+				p_node->_height -= 2;
+				if (!c_node)
+					return c_node;
 				if (!c_node->_left)
 					p_node->_right = NULL;
 				else
@@ -796,6 +826,9 @@ namespace ft
 
 			Node<T> *RotateLR(Node<T> *current)
 			{
+				// current->_height -= 2;
+				current->_left->_height += 1;
+				current->_left->_right->_height += 1;
 				current->_left = RotateRR(current->_left);
 				// std::cout << "LR" << std::endl;
 
@@ -804,6 +837,9 @@ namespace ft
 
 			Node<T> *RotateRL(Node<T> *current)
 			{
+				// current->_height -= 2;
+				current->_right->_height += 1;
+				current->_right->_left->_height += 1;
 				current->_right = RotateLL(current->_right);
 				// std::cout << "RL" << std::endl;
 
