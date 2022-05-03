@@ -444,14 +444,10 @@ namespace ft
 						tmp->_parent->_height += 1;
 					tmp = tmp->_parent;
 				}
-				int max_height = _root->_height;
 
 				// 새롭게 갱신
-				if (rebalance_tree(new_node) == 1)
-				{
-					_root->_height = max_height - 1;
-					// preorder_for_update(_root);
-				}
+				rebalance_insert(new_node);
+				_root = _super_root->_left;
 
 				// 전위 순회로 height 갱신
 				return (ft::make_pair<iterator, bool>(new_node, true));
@@ -627,7 +623,7 @@ namespace ft
 				start_node->_height = 1;
 				update_up(start_node);
 				if (start_node != _super_root)
-					rebalance_tree(start_node);
+					rebalance_erase(start_node);
 				return 1;
 			}
 
@@ -666,18 +662,7 @@ namespace ft
 
 			void	clear()
 			{
-				while (_root)
-				{
-					Node<T> *tmp = _root;
-					while (tmp->_left || tmp->_right)
-					{
-						if (tmp->_left)
-							tmp = tmp->_left;
-						else if (tmp->_right)
-							tmp = tmp->_right;
-					}
-					erase(tmp->_value);
-				}
+				erase(begin(), end());
 			}
 
 			void swap(Tree &x)
@@ -726,13 +711,13 @@ namespace ft
 				return (l_depth - r_depth);
 			}
 
-			int	rebalance_tree(Node<T> *new_node)
+			void	rebalance_insert(Node<T> *new_node)
 			{
 				Node<T> *tmp = new_node;
 				int	balance_factor;
 
 				if (tmp == _super_root)
-					return (0);
+					return ;
 				while (tmp != _super_root)
 				{
 					balance_factor = get_balance_factor(iterator(tmp));
@@ -750,7 +735,6 @@ namespace ft
 						tmp = RotateLR(tmp);
 					_root = _super_root->_left;
 					update_up(tmp);
-					return (1);
 				}
 				else if (balance_factor < -1)
 				{
@@ -762,9 +746,49 @@ namespace ft
 						tmp = RotateRL(tmp);
 					_root = _super_root->_left;
 					update_up(tmp);
-					return (1);
 				}
-				return (0);
+			}
+
+			void rebalance_erase(Node<T> *new_node)
+			{
+				Node<T> *tmp = new_node;
+				int balance_factor = 0;
+
+				if (tmp == _super_root)
+					return;
+				while (tmp != _super_root)
+				{
+					balance_factor = get_balance_factor(iterator(tmp));
+					if (balance_factor > 1 || balance_factor < -1)
+					{
+						if (!tmp->_left || !tmp->_right)
+							tmp->_height++;
+					}
+					break;
+					tmp = tmp->_parent;
+				}
+				if (balance_factor > 1)
+				{
+					// LL
+					if (get_balance_factor(iterator(tmp->_left)) >= 0)
+						tmp = RotateLL(tmp);
+					// LR
+					else
+						tmp = RotateLR(tmp);
+					_root = _super_root->_left;
+					update_up(tmp);
+				}
+				else if (balance_factor < -1)
+				{
+					// RR
+					if (get_balance_factor(iterator(tmp->_right)) <= 0)
+						tmp = RotateRR(tmp);
+					// RL
+					else
+						tmp = RotateRL(tmp);
+					_root = _super_root->_left;
+					update_up(tmp);
+				}
 			}
 
 			Node<T> *RotateLL(Node<T> *current)
