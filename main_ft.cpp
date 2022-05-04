@@ -1,5 +1,4 @@
 #include <time.h>
-
 #include <iostream>
 #include "map.hpp"
 #include "stack.hpp"
