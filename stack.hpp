@@ -48,13 +48,14 @@ namespace ft
 		protected:
 			container_type c;
 
+		// friend는 외부함수나 클래스가 private 변수에 접근할 수 있도록 해줌.
 		template <class U, class C>
 		friend bool operator==(const stack<U, C> &lhs, const stack<U, C> &rhs);
 
 		template <class U, class C>
 		friend bool operator<(const stack<U, C> &lhs, const stack<U, C> &rhs);
 	};
-
+	// c에 접근할 수 있도록 하기 위해 위에 friend를 붙이고 밑에 오버로드는 벡터에 있는 것을 사용한다.
 	template <class U, class C>
 	bool operator==(const stack<U, C> &lhs, const stack<U, C> &rhs)
 	{

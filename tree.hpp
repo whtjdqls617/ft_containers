@@ -622,8 +622,11 @@ namespace ft
 				_node_alloc.deallocate(tmp_it.base(), 1);
 				start_node->_height = 1;
 				update_up(start_node);
-				if (start_node != _super_root)
+				while (start_node != _super_root)
+				{
 					rebalance_erase(start_node);
+					start_node = start_node->_parent;
+				}
 				return 1;
 			}
 

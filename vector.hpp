@@ -451,8 +451,8 @@ namespace ft
 				_alloc.destroy(&*position);
 				for (iterator it = position; it != end(); it++)
 				{
-					_alloc.construct(&*it, *(it + 1));
 					_alloc.destroy(&*it);
+					_alloc.construct(&*it, *(it + 1));
 				}
 				_size -= 1;
 				return position;
@@ -464,8 +464,8 @@ namespace ft
 					_alloc.destroy(&*it);
 				for (iterator it = last; it != end(); it++)
 				{
-					_alloc.construct(&*(first + std::distance(last, it)), *it);
 					_alloc.destroy(&*it);
+					_alloc.construct(&*(first + std::distance(last, it)), *it);
 				}
 				_size -= std::distance(first, last);
 				return first;
@@ -549,7 +549,8 @@ namespace ft
 			size_type		_size;
 			size_type		_capacity;
 	};
-
+	// 비교할 두개가 다른 객체일 때 사용하기 위해 (멤버 함수에서 사용하면 두개의 순서가 반대로 되면 에러 발생)
+	// 멤버함수에는 비교할 대상이 자기와 같은 객체여야한다.
 	template <typename T, class Alloc>
 	bool  operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 	{
