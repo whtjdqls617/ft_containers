@@ -14,10 +14,10 @@ namespace ft
 
 	template <class InputIterator1, class InputIterator2>
   	bool lexicographical_compare (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2)
-	{ // vector 연산자 오버로딩에 사용
-		while (first1!=last1)
+	{
+		while (first1 != last1)
 		{
-			if (first2==last2 || *first2 < *first1)
+			if (first2 == last2 || *first2 < *first1)
 				return false;
 			else if (*first1 < *first2)
 				return true;
@@ -30,9 +30,9 @@ namespace ft
 	template <class InputIterator1, class InputIterator2, class Compare>
   	bool lexicographical_compare (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2, Compare comp)
 	{
-		while (first1!=last1)
+		while (first1 != last1)
 		{
-			if (first2==last2 || comp(*first2 < *first1))
+			if (first2 == last2 || comp(*first2 < *first1))
 				return false;
 			else if (comp(*first1 < *first2))
 				return true;
@@ -43,8 +43,8 @@ namespace ft
 	};
 	template <class InputIterator1, class InputIterator2>
   	bool equal (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
-	{ // vector 연산자 오버로딩에 사용
-		while (first1!=last1)
+	{
+		while (first1 != last1)
 		{
     		if (!(*first1 == *first2))
       			return false;
@@ -56,7 +56,7 @@ namespace ft
 	template <class InputIterator1, class InputIterator2, class BinaryPredicate>
   	bool equal (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred)
 	{
-		while (first1!=last1)
+		while (first1 != last1)
 		{
     		if (!pred(*first1, *first2))
       			return false;
@@ -68,8 +68,8 @@ namespace ft
 	template <bool is_integral, typename T>
 	struct is_integral_base
 	{
-		typedef T type;
-		const static bool value = is_integral;
+		typedef T 			type;
+		const static bool	value = is_integral;
 	};
 
 	template <class T>
@@ -123,11 +123,11 @@ namespace ft
 	template <typename T1, typename T2>
 	struct pair // map에서 사용
 	{
-		typedef T1 first_type;
-		typedef T2 second_type;
+		typedef T1 		first_type;
+		typedef T2 		second_type;
 
-		first_type first;
-		second_type second;
+		first_type 		first;
+		second_type 	second;
 
 		pair() : first(), second() {}
 
@@ -150,11 +150,11 @@ namespace ft
 	template <typename T1, typename T2>
 	struct pair<const T1, T2> // 부분 특수화 => T1의 타입이 const일 때 위에서 const에 할당을 하려해서 터졌는데, 이를 해결하기위해 아래와같이 진행하였다. 이 부분특수화는 const를 억지로 제거하는 느낌임
 	{
-		typedef T1 first_type;
-		typedef T2 second_type;
+		typedef T1 		first_type;
+		typedef T2 		second_type;
 
-		first_type first;
-		second_type second;
+		first_type 		first;
+		second_type 	second;
 
 		pair() : first(), second() {}
 

@@ -27,11 +27,11 @@ namespace ft
 
 				protected:
 					Compare comp;
-					value_compare(Compare c) : comp(c) {} // constructed with map's comparison object
+					value_compare(Compare c) : comp(c) {}
 				public:
-					typedef bool 	result_type;
-					typedef 		value_type first_argument_type;
-					typedef 		value_type second_argument_type;
+					typedef bool 				result_type;
+					typedef value_type 			first_argument_type;
+					typedef value_type 			second_argument_type;
 
 					bool operator()(const value_type &x, const value_type &y) const
 					{
@@ -217,7 +217,7 @@ namespace ft
 				return (_tree.count(ft::make_pair(k, mapped_type())));
 			}
 
-			iterator lower_bound(const key_type &k) // 찾으려 하는 key값이 "없으면" key값보다 큰 가장 작은 정수 값을 찾습니다.
+			iterator lower_bound(const key_type &k) // 찾으려 하는 key값이 "없으면" key값보다 큰 것들 중에서 가장 작은 정수 값을 찾습니다.
 			{
 				iterator it = begin();
 				for (; it != end(); it++)

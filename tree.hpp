@@ -12,12 +12,12 @@ namespace ft
 	struct Node
 	{
 	public:
-		typedef T value_type;
-		Node *_parent;
-		Node *_left;
-		Node *_right;
-		value_type _value;
-		int _height;
+		typedef T 	value_type;
+		Node*		_parent;
+		Node*		_left;
+		Node*		_right;
+		value_type 	_value;
+		int 		_height;
 
 		Node() : _parent(NULL), _left(NULL), _right(NULL), _value(), _height(1) {}
 
@@ -44,11 +44,11 @@ namespace ft
 	class tree_iterator
 	{
 	public:
-		typedef std::ptrdiff_t difference_type;
-		typedef T value_type;
-		typedef T *pointer;
-		typedef T &reference;
-		typedef typename std::bidirectional_iterator_tag iterator_category;
+		typedef std::ptrdiff_t 								difference_type;
+		typedef T 											value_type;
+		typedef T*											pointer;
+		typedef T&											reference;
+		typedef typename std::bidirectional_iterator_tag 	iterator_category;
 
 		tree_iterator() : _node() {}
 
@@ -149,11 +149,11 @@ namespace ft
 	class tree_const_iterator
 	{
 	public:
-		typedef std::ptrdiff_t difference_type;
-		typedef T value_type;
-		typedef T *pointer;
-		typedef T &reference;
-		typedef typename std::bidirectional_iterator_tag iterator_category;
+		typedef std::ptrdiff_t 								difference_type;
+		typedef T											value_type;
+		typedef T*											pointer;
+		typedef T&											reference;
+		typedef typename std::bidirectional_iterator_tag 	iterator_category;
 
 		tree_const_iterator() : _node() {}
 
@@ -256,20 +256,20 @@ namespace ft
 	struct Tree
 	{
 	public:
-		typedef Compare key_compare;
-		typedef Alloc allocator_type;
-		typedef T value_type;
-		typedef std::ptrdiff_t difference_type;
-		typedef size_t size_type;
-		typedef typename allocator_type::template rebind<Node<T> >::other node_alloc_type; // 중첩 구조체 템플릿
-		typedef typename allocator_type::reference reference;
-		typedef typename allocator_type::const_reference const_reference;
-		typedef typename allocator_type::pointer pointer;
-		typedef typename allocator_type::const_pointer const_pointer;
-		typedef typename ft::tree_iterator<value_type> iterator;
-		typedef typename ft::tree_const_iterator<value_type> const_iterator;
-		typedef typename ft::reverse_iterator<iterator> reverse_iterator;
-		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef Compare 													key_compare;
+		typedef Alloc 														allocator_type;
+		typedef T 															value_type;
+		typedef std::ptrdiff_t 												difference_type;
+		typedef size_t 														size_type;
+		typedef typename allocator_type::template rebind<Node<T> >::other	node_alloc_type; // 중첩 구조체 템플릿
+		typedef typename allocator_type::reference 							reference;
+		typedef typename allocator_type::const_reference 					const_reference;
+		typedef typename allocator_type::pointer 							pointer;
+		typedef typename allocator_type::const_pointer 						const_pointer;
+		typedef typename ft::tree_iterator<value_type> 						iterator;
+		typedef typename ft::tree_const_iterator<value_type> 				const_iterator;
+		typedef typename ft::reverse_iterator<iterator> 					reverse_iterator;
+		typedef typename ft::reverse_iterator<const_iterator> 				const_reverse_iterator;
 
 		Tree() : _super_root(NULL), _root(NULL), _key_compare(key_compare()), _node_alloc(node_alloc_type())
 		{
@@ -479,6 +479,7 @@ namespace ft
 						tmp->_height++;
 					}
 				}
+				// 내가 오른쪽 자식일 때 부모의 왼쪽자식이 있을 때 height를 비교해서 내가 더 작으면 return, 내가 더 크면 부모로 이둥 후 ++
 				else if (tmp == tmp->_parent->_right)
 				{
 					if (tmp->_parent->_left)
@@ -491,55 +492,15 @@ namespace ft
 							tmp = tmp->_parent;
 						}
 					}
+					// 내가 오른쪽 자식일 때 부모의 왼쪽자식이 없으면 부모로 이동 후 ++
 					else
 					{
 						tmp->_parent->_height = tmp->_height + 1;
 						tmp = tmp->_parent;
 					}
 				}
-				// 내가 오른쪽 자식일 때 부모의 왼쪽자식이 있을 때 height를 비교해서 내가 더 작으면 return, 내가 더 크면 부모로 이둥 후 ++
-
-				// 내가 오른쪽 자식일 때 부모의 왼쪽자식이 없으면 부모로 이동 후 ++
 			}
 		}
-
-		// void update_up_erase(Node<T> *tmp)
-		// {
-		// 	while (tmp)
-		// 	{
-		// 		if (tmp == _super_root)
-		// 			return ;
-		// 		// 부모의 균형인수 == 1
-		// 		if (get_balance_factor(tmp->_parent) > 0)
-		// 		{
-		// 			// tmp가 왼쪽 자식
-		// 				// tmp의 균형인수가 == 0
-		// 					// tmp가 자식이 있을 때
-		// 						// return
-		// 					// tmp가 자식이 없을 때
-		// 						// tmp 부모의 높이 --
-		// 						// tmp = tmp->부모
-		// 				// tmp의 균형인수가 != 0
-		// 					//tmp 부모의 높이 --
-		// 					//tmp = tmp->부모
-		// 			// tmp가 오른쪽 자식
-		// 				// tmp의 균형인수 == 0
-		// 					// tmp가 자식이 있을 때
-		// 						// return;
-		// 					// tmp가 자식이 없을 때
-		// 						//tmp 부모의 높이 --
-		// 						//tmp = tmp->부모
-		// 				// tmp의 균형인수 != 0
-		// 					//tmp 부모의 높이 --
-		// 					//tmp = tmp->부모
-
-		// 		}
-		// 		else if (get_balance_factor(tmp->_parent) < 0)
-		// 		{
-
-		// 		}
-		// 	}
-		// }
 
 		iterator insert(iterator position, const value_type &val)
 		{
@@ -741,7 +702,7 @@ namespace ft
 			return (0);
 		}
 
-		size_type max_size() const // 이 부분은 노드의 변수 개수에 따라 잘리진다.
+		size_type max_size() const
 		{
 			return (_node_alloc.max_size());
 		}
@@ -919,10 +880,10 @@ namespace ft
 		}
 
 	private:
-		Node<T> *_super_root;
-		Node<T> *_root;
-		key_compare _key_compare;
-		node_alloc_type _node_alloc;
+		Node<T>*		_super_root;
+		Node<T>*		_root;
+		key_compare 	_key_compare;
+		node_alloc_type	_node_alloc;
 	};
 }
 
