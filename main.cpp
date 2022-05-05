@@ -22,7 +22,7 @@ struct Buffer
 	char buff[BUFFER_SIZE];
 };
 
-#define COUNT (MAX_RAM / (int)sizeof(Buffer))
+#define COUNT (MAX_RAM / (int)sizeof(Buffer)
 
 template <typename T>
 class MutantStack : public ft::stack<T>
